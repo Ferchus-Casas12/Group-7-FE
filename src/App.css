@@ -1,0 +1,11 @@
+
+.read-the-docs {
+  color: #888;
+}
+button:focus {
+  outline: none;
+  box-shadow: none;
+}
+button:hover{
+  background-color: rgba(156, 156, 156, 0.62);
+}
