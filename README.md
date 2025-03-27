@@ -1,3 +1,5 @@
+# Group-7-FE
+holds the frontend files of dr. Mustafa's SWE class, for group 7
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
