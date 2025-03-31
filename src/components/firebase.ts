@@ -1,6 +1,7 @@
 // firebase.ts
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore"; // <-- Import getFirestore
 
 // Your Firebase config (find this in your Firebase Console)
 const firebaseConfig = {
@@ -16,6 +17,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Get Firebase Auth instance
-const auth = getAuth(app);
+export const Auth = getAuth(app);
 
-export { auth };
+// Initialize Firestore and export it
+export const db = getFirestore(app);
+
+export default app;

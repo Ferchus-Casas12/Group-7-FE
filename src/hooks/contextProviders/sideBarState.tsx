@@ -24,7 +24,7 @@ interface AppProviderProps {
 }
 
 export const SideBarContextProvider: React.FC<AppProviderProps> = ({ children }) => {
-  const [section, setSection] = useState<SideBarState>({ section: "noSection" });
+  const [section, setSection] = useState<SideBarState>({ section: "Welcome Back!" });
   console.log("section value: ", section);
 
   return (

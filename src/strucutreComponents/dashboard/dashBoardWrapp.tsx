@@ -1,5 +1,6 @@
 import { CSSProperties } from "react";
 import { useSideBarContext } from "../../hooks/contextProviders/sideBarState";
+import AssessmentComponent from "./Assesments/AssessmentComponent";
 
 function DashBoardWrapper() {
   const { section } = useSideBarContext();
@@ -7,6 +8,7 @@ function DashBoardWrapper() {
     <div style={styles.Wrapper}>
       <div style={styles.WrapperHeader}>
         <span style={styles.header}>{section.section}</span>
+        <AssessmentComponent assessmentId="test1"></AssessmentComponent>
       </div>
     </div>
   );
@@ -22,10 +24,8 @@ const styles: Record<string, CSSProperties> = {
     marginLeft: 12,
     borderRadius: 10,
     padding: 15,
-    },
-    WrapperHeader: {
-
-    },
+  },
+  WrapperHeader: {},
   header: {
     fontSize: 26,
     fontWeight: "bold",
