@@ -62,7 +62,7 @@ function SideBar() {
           width: "10vw",
           py: 1,
           color: section.section === "Home" ? "black" : "#616783",
-          backgroundColor: section.section === "HHome" ? "#e0e2ee" : "transparent",
+          backgroundColor: section.section === "Home" ? "#e0e2ee" : "transparent",
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
