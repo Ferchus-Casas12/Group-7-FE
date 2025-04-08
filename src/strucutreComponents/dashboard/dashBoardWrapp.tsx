@@ -8,7 +8,7 @@ function DashBoardWrapper() {
     <div style={styles.Wrapper}>
       <div style={styles.WrapperHeader}>
         <span style={styles.header}>{section.section}</span>
-        <AssessmentComponent assessmentId="test1"></AssessmentComponent>
+        <AssessmentComponent assessmentId="test4"></AssessmentComponent>
       </div>
     </div>
   );
@@ -18,7 +18,7 @@ export default DashBoardWrapper;
 
 const styles: Record<string, CSSProperties> = {
   Wrapper: {
-    height: 750,
+    height: "94vh",
     width: window.innerWidth,
     backgroundColor: "#e0e2ee",
     marginLeft: 12,

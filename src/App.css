@@ -8,3 +8,29 @@ button:focus {
 button:hover {
   background-color: rgba(156, 156, 156, 0.62);
 }
+
+.sd-root-modern__wrapper {
+  width: 100% !important;
+  height: 100% !important;
+  background-color: #f8f9fa !important; /* customize background */
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.sd-root-modern.sd-progress--pages.sd-root-modern--full-container {
+  margin-top: 30px;
+  transform: scale(0.8);
+  transform-origin: top center;
+}
+.body {
+  height: "110vh";
+}
+.mainBody {
+  background-color: black;
+}
+
+.sd-element--with-frame.sd-element.sd-question.sd-row__question.sd-question--title-top {
+  transform: scale(1.4);
+  margin-bottom: 100px;
+  margin-top: 40px;
+}

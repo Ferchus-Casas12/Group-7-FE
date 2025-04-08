@@ -53,7 +53,11 @@ function AssessmentComponent({ assessmentId }: AssessmentComponentProps) {
   if (data) {
     const survey = new Model(data);
     survey.applyTheme(DoubleBorderLight);
-    return <Survey model={survey} />;
+    return (
+      <div style={{ height: "97vh" }}>
+        <Survey model={survey} />
+      </div>
+    );
   }
 
   if (loading) return <div>Loading...</div>;
