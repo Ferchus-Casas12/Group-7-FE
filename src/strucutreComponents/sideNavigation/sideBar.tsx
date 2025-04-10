@@ -59,7 +59,7 @@ function SideBar() {
         sx={{
           marginBottom: 0.3,
           borderRadius: 1.5,
-          width: "10vw",
+          width: "9.5vw",
           py: 1,
           color: section.section === "Home" ? "black" : "#616783",
           backgroundColor: section.section === "Home" ? "#e0e2ee" : "transparent",
@@ -84,7 +84,7 @@ function SideBar() {
         sx={{
           marginBottom: 0.3,
           borderRadius: 1,
-          width: "10vw",
+          width: "9.5vw",
           py: 1,
           color: section.section === "Lectures" ? "black" : "#616783",
           backgroundColor: section.section === "Lectures" ? "#e0e2ee" : "transparent",
@@ -109,7 +109,7 @@ function SideBar() {
         sx={{
           marginBottom: 0.3,
           borderRadius: 1,
-          width: "10vw",
+          width: "9.5vw",
           py: 1,
           color: section.section === "Assignments" ? "black" : "#616783",
           backgroundColor: section.section === "Assignments" ? "#e0e2ee" : "transparent",
@@ -127,29 +127,29 @@ function SideBar() {
         <span style={textStyle}>Assignments</span>
       </Button>
 
-      {/* Example Button 4: Quizzes */}
+      {/* Example Button 4: Assessments */}
       <Button
-        key="Quizzes"
+        key="Assessments"
         variant="text"
         sx={{
           marginBottom: 0.3,
           borderRadius: 1,
-          width: "10vw",
+          width: "9.5vw",
           py: 1,
-          color: section.section === "Quizzes" ? "black" : "#616783",
-          backgroundColor: section.section === "Quizzes" ? "#e0e2ee" : "transparent",
+          color: section.section === "Assessments" ? "black" : "#616783",
+          backgroundColor: section.section === "Assessments" ? "#e0e2ee" : "transparent",
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "flex-start",
           pl: 1,
         }}
-        onClick={() => setSection(prev => ({ ...prev, section: "Quizzes" }))}
+        onClick={() => setSection(prev => ({ ...prev, section: "Assessments" }))}
       >
         <div style={iconContainerStyle}>
           <HomeOutlinedIcon />
         </div>
-        <span style={textStyle}>Quizzes</span>
+        <span style={textStyle}>Assessments</span>
       </Button>
 
       {/* Example Button 5: Grades */}
@@ -159,7 +159,7 @@ function SideBar() {
         sx={{
           marginBottom: 0.3,
           borderRadius: 1.5,
-          width: "10vw",
+          width: "9.5vw",
           py: 1,
           color: section.section === "Grades" ? "black" : "#616783",
           backgroundColor: section.section === "Grades" ? "#e0e2ee" : "transparent",
@@ -184,7 +184,7 @@ function SideBar() {
         sx={{
           marginBottom: 0.3,
           borderRadius: 1,
-          width: "10vw",
+          width: "9.5vw",
           py: 1,
           color: section.section === "Settings" ? "black" : "#616783",
           backgroundColor: section.section === "Settings" ? "#e0e2ee" : "transparent",

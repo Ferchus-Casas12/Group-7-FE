@@ -1,0 +1,13 @@
+to get a branch into your console:
+git fetch "https..."
+important... everytime you fetch, run "npm install"
+
+
+to update changes
+git add .
+git commit -m "write about changes you made"
+git push 
+
+to start running the webpage:
+npm run dev -> inside your terminal 
+

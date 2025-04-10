@@ -9,13 +9,13 @@ button:hover {
   background-color: rgba(156, 156, 156, 0.62);
 }
 
-.sd-root-modern__wrapper {
+/* .sd-root-modern__wrapper {
   width: 100% !important;
   height: 100% !important;
-  background-color: #f8f9fa !important; /* customize background */
+  background-color: #f8f9fa !important; 
   border-radius: 10px !important;
   box-sizing: border-box !important;
-}
+} */
 
 .sd-root-modern.sd-progress--pages.sd-root-modern--full-container {
   margin-top: 30px;
@@ -29,8 +29,69 @@ button:hover {
   background-color: black;
 }
 
-.sd-element--with-frame.sd-element.sd-question.sd-row__question.sd-question--title-top {
+/* .sd-element--with-frame.sd-element.sd-question.sd-row__question.sd-question--title-top {
   transform: scale(1.4);
   margin-bottom: 100px;
   margin-top: 40px;
+} */
+.custom-toast {
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 1.5rem;
+  min-width: 300px;
+  max-width: 500px;
+  margin: auto;
+}
+.MuiBox-root {
+  background-color: "#bec2de";
+  color: "#bec2de";
+}
+
+.segmented-progresscircle {
+  position: relative;
+  display: inline-block;
+}
+.segmented-progresscircle svg {
+  width: 160px;
+  height: 160px;
+}
+.segmented-progresscircle circle {
+  fill: transparent;
+}
+.segmented-progresscircle__circles {
+  transform: rotate(-90deg);
+}
+.segmented-progresscircle__circles__progress-dashes {
+  stroke-linecap: round;
+  stroke: #19e27a;
+}
+.segmented-progresscircle__circles__background-dashes {
+  stroke-linecap: round;
+  stroke: #aaa;
+  stroke-dasharray: 27 10 27 10 27 10 27 10 27 10 27 10 27 10 27 10 27 10 27 1000;
+}
+.segmented-progresscircle__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 1;
+  text-align: center;
+}
+.segmented-progresscircle__text__primary {
+  font-size: 25px;
+  color: #3e3e3edb;
+  font-weight: 1000;
+}
+.segmented-progresscircle__text__secondary {
+  font-size: 14px;
+  color: #767676da;
+  margin-bottom: 2px;
+  font-weight: 900;
+}
+
+.sd-root-modern.sd-progress--pages.sd-root-modern--full-container{
+  transform: scale(.95);
 }

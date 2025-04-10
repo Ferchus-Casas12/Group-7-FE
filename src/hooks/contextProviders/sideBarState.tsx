@@ -4,7 +4,6 @@ import React, {
   ReactNode,
   SetStateAction,
   useContext,
-  useEffect,
   useState,
 } from "react";
 
@@ -24,7 +23,7 @@ interface AppProviderProps {
 }
 
 export const SideBarContextProvider: React.FC<AppProviderProps> = ({ children }) => {
-  const [section, setSection] = useState<SideBarState>({ section: "Welcome Back!" });
+  const [section, setSection] = useState<SideBarState>({ section: "Home" });
   console.log("section value: ", section);
 
   return (
