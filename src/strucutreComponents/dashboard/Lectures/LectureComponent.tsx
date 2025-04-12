@@ -18,7 +18,7 @@ function LectureComponent() {
         const urls = await Promise.all(results.items.map((item) => getDownloadURL(item)));
         setImageURLs(urls);
       } catch (error) {
-        console.error("error fetching images for lecture:", error);
+        console.error("error fetching images for lectre:", error);
       }
     };
 
