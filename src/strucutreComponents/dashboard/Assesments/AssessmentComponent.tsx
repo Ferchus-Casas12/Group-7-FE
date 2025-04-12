@@ -53,8 +53,22 @@ function AssessmentComponent({ assessmentId }: AssessmentComponentProps) {
   if (data) {
     const survey = new Model(data);
     survey.applyTheme(DoubleBorderLight);
+
+    survey.onComplete.add((sender) => {
+      const correctAnswers = sender.getCorrectAnswerCount();
+      const totalQuestions = sender.getAllQuestions().length;
+      const score = (correctAnswers / totalQuestions) * 100;
+
+      // use the score variable to update the value in the database and put code inside this block  
+
+      toast.success(`You scored ${correctAnswers} out of ${totalQuestions} (${score.toFixed(2)}%)`, {
+        position: "top-center",
+        className: "custom-toast",
+        autoClose: 8000, // optional: duration
+      });
+    });
     return (
-      <div style={{ height: "97vh" }}>
+      <div style={{ height: "80vh" }}>
         <Survey model={survey} />
       </div>
     );
