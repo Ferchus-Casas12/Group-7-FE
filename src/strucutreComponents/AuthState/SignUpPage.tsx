@@ -2,7 +2,7 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { Auth, db } from "../../components/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
@@ -16,15 +16,8 @@ export default function FormPropsTextFields() {
     age: "",
   });
 
-  const defaultProgress = {
-    lecturesProgress: 0,
-    assessmentsProgress: 0,
-    assignmentsProgress: 0,
-  };
-
   const handleChange = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
-    // Update just the relevant key in our state object
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -34,7 +27,7 @@ export default function FormPropsTextFields() {
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    // Validate that all fields are filled
+    // Basic validations
     if (
       !formData.firstName.trim() ||
       !formData.lastName.trim() ||
@@ -46,55 +39,57 @@ export default function FormPropsTextFields() {
       return;
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      toast.error("Please enter valid email format.");
+      toast.error("Please enter a valid email address.");
       return;
     }
 
-    // Validate password length (example: at least 6 characters)
     if (formData.password.length < 6) {
       toast.error("Password must be at least 6 characters long.");
       return;
     }
 
-    // Validate age is a positive number
     if (isNaN(Number(formData.age)) || Number(formData.age) <= 0) {
       toast.error("Please enter a valid age.");
       return;
     }
 
     const signUp = async () => {
-      console.log("Form submitted with data:", formData);
       toast.info("Creating user...");
 
       try {
+        // Step 1: Create user with email and password
         const userCredential = await createUserWithEmailAndPassword(
           Auth,
           formData.email,
           formData.password
         );
-        console.log("User credential created successfully:", userCredential.user);
         const user = userCredential.user;
 
-        const userData = {
-          uid: user.uid,
-          email: user.email,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          ...defaultProgress,
-          createdAt: new Date(),
-        };
+        // Step 2 (optional): Set displayName (not required unless needed)
+        await updateProfile(user, {
+          displayName: `${formData.firstName} ${formData.lastName}`,
+        });
 
-        await setDoc(doc(db, "users", user.uid), userData);
-        console.log("User created and stored in DB successfully");
+        // Step 3: Patch user document with additional profile info AFTER onCreate function runs
+        await setDoc(
+          doc(db, "users", user.uid),
+          {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            age: formData.age,
+          },
+          { merge: true }
+        );
 
         toast.dismiss();
-        toast.success("User created succesfully!");
+        toast.success("User created successfully!");
+        console.log("User signed up and patched successfully.");
       } catch (error) {
-        toast.error("Error creating user");
-        console.log(error);
+        toast.dismiss();
+        toast.error("Error creating user.");
+        console.error(error);
       }
     };
 
