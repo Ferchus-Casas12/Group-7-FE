@@ -3,7 +3,7 @@ import "survey-core/survey-core.css";
 
 import { useEffect, useState } from "react";
 import { db } from "../../../components/firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, writeBatch } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { Model } from "survey-core";
 import { Survey } from "survey-react-ui";
@@ -66,8 +66,6 @@ function AssessmentComponent({ assessmentId, onSubmitCallback }: AssessmentCompo
     const survey = new Model(data);
     survey.applyTheme(DoubleBorderLight);
 
-    
-
     survey.onComplete.add(async (sender) => {
       const correctAnswers = sender.getCorrectAnswerCount();
       const totalQuestions = sender.getAllQuestions().length;
@@ -79,15 +77,22 @@ function AssessmentComponent({ assessmentId, onSubmitCallback }: AssessmentCompo
     }
 
       try {
-        const userRef = doc(db, "users", user.uid); // Reference to user's document
-        await updateDoc(userRef, {
-          [`assessments.${assessmentId}.score`]: score, // Store the score inside the assessments object
-        });  
+         const batch = writeBatch(db); // created a batch write
+         const userRef = doc(db, "users", user.uid);
 
-      toast.success(`You scored ${correctAnswers} out of ${totalQuestions} (${score.toFixed(2)}%)`, {
-        position: "top-center",
-        className: "custom-toast",
-        autoClose: 8000, // optional: duration
+        // Add multiple updates to the batch
+        batch.update(userRef, {
+          [`assessments.${assessmentId}.score`]: score,
+          [`assessments.${assessmentId}.completed`]: true, 
+        });
+
+        
+        await batch.commit();
+
+        toast.success(`You scored ${correctAnswers} out of ${totalQuestions} (${score.toFixed(2)}%)`, {
+          position: "top-center",
+          className: "custom-toast",
+          autoClose: 8000,
       });
 
       if (onSubmitCallback) onSubmitCallback(); // call teh onsubmite fucntion 
