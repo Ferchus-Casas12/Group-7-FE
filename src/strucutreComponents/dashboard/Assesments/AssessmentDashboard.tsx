@@ -87,22 +87,7 @@ function AssesmentDashboard() {   //displays the assesment dashboard
           progress={avgAssessmentProgress}
           title="Assessments"
         />
-        <SegmentedProgressCircle
-          r="70"
-          cx="80"
-          cy="80"
-          strokeWidth="8"
-          progress={35}
-          title="Lectures"
-        />
-        <SegmentedProgressCircle
-          r="70"
-          cx="80"
-          cy="80"
-          strokeWidth="8"
-          progress={95}
-          title="Assignments"
-        />
+        
       </div>
       <Box
         className="assessment-dashboard"
@@ -178,7 +163,8 @@ export default AssesmentDashboard;
 const styles: Record<string, CSSProperties> = {
   circlesWrapper: {
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "center",
     alignSelf: "center",
     justifySelf: "center",
     width: "40%",
