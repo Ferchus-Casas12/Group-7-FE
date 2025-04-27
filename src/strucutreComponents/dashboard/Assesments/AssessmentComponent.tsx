@@ -3,69 +3,104 @@ import "survey-core/survey-core.css";
 
 import { useEffect, useState } from "react";
 import { db } from "../../../components/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, writeBatch } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { Model } from "survey-core";
 import { Survey } from "survey-react-ui";
 import { DoubleBorderLight } from "survey-core/themes";
+import { useContext } from "react";
+import { AuthContext } from "../../../hooks/contextProviders/AuthProvider";
 
 interface AssessmentComponentProps {
   assessmentId: string;
+  onSubmitCallback?: () => void; // callback when assessment is submited
 }
 
 // we use the assessment id to dinamically change the fectch call, essentially the test id will
 //dinamically change the name of the fectch call, which in reality we use witbh firebase, firestore framework
-function AssessmentComponent({ assessmentId }: AssessmentComponentProps) {
+function AssessmentComponent({ assessmentId, onSubmitCallback }: AssessmentComponentProps) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { user, userData } = useContext(AuthContext);
+  
 
-  useEffect(() => {
-    const fetchTestData = async () => {
+  useEffect(() => { // fetech assesemnt data based on assessment id
+    const fetchAssessmentFromFunction = async () => {
       try {
-        // Initialize Firestore (make sure you've already initialized Firebase in your project)
+        const response = await fetch("https://us-central1-coursemanagementsystem-8d873.cloudfunctions.net/getAllAssessments", { // fecth from function
+          method: "GET"
+        });
+        const result = await response.json();
+        console.log(result);
 
-        // Get a reference to the document in the "tests" collection with ID "Tests"
-        const docRef = doc(db, "tests", "Tests");
-
-        // Retrieve the document snapshot
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          // Access the field "test1" which contains the large JSON string
-          const jsonString = docSnap.data()[assessmentId];
-
-          // Parse the JSON string into a JavaScript object
-          const jsonData = JSON.parse(jsonString);
-          setData(jsonData);
+        if (result.message === "Assessments fetched successfully") {
+          const jsonString = result.data[assessmentId]; // Extract the one you need
+          const parsed = JSON.parse(jsonString);
+          setData(parsed);
         } else {
-          throw new Error("Document does not exist");
+          throw new Error("Invalid response from server");
         }
       } catch (error) {
-        toast.error("error fetching test!");
+        console.error(error);
+        toast.error("Error fetching test!");
       } finally {
         setLoading(false);
       }
     };
+    
 
-    fetchTestData();
-  }, []);
+    fetchAssessmentFromFunction(); // call the fucntion that was fetched
+  }, [assessmentId]);
+
+  if (loading) return <div>Loading...</div>;
+
+  if (userData?.assessments?.[assessmentId]?.completed) { // check if assessment is compelted
+    return (
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>
+        <h3>You have already completed this assessment.</h3>
+      </div>
+    );
+  }
 
   if (data) {
     const survey = new Model(data);
     survey.applyTheme(DoubleBorderLight);
 
-    survey.onComplete.add((sender) => {
+    survey.onComplete.add(async (sender) => {
       const correctAnswers = sender.getCorrectAnswerCount();
       const totalQuestions = sender.getAllQuestions().length;
       const score = (correctAnswers / totalQuestions) * 100;
+      
+    if (!user?.uid) {
+     toast.error("User not found");
+      return;
+    }
 
-      // use the score variable to update the value in the database and put code inside this block  
+      try {
+         const batch = writeBatch(db); // created a batch write
+         const userRef = doc(db, "users", user.uid);
 
-      toast.success(`You scored ${correctAnswers} out of ${totalQuestions} (${score.toFixed(2)}%)`, {
-        position: "top-center",
-        className: "custom-toast",
-        autoClose: 8000, // optional: duration
+        // Add multiple updates to the batch
+        batch.update(userRef, {
+          [`assessments.${assessmentId}.score`]: score,
+          [`assessments.${assessmentId}.completed`]: true, 
+        });
+
+        
+        await batch.commit();
+
+        toast.success(`You scored ${correctAnswers} out of ${totalQuestions} (${score.toFixed(2)}%)`, {
+          position: "top-center",
+          className: "custom-toast",
+          autoClose: 8000,
       });
+
+      if (onSubmitCallback) onSubmitCallback(); // call teh onsubmite fucntion 
+
+    } catch (error) {
+      console.error("Error updating the score in Firestore:", error);
+      toast.error("Failed to save your score!");
+    }
     });
     return (
       <div style={{ height: "80vh" }}>
@@ -74,7 +109,6 @@ function AssessmentComponent({ assessmentId }: AssessmentComponentProps) {
     );
   }
 
-  if (loading) return <div>Loading...</div>;
 
   return (
     <div>

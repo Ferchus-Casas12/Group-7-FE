@@ -4,172 +4,167 @@ import SegmentedProgressCircle from "../progressBars/SegmentedProgressCircle";
 import AssessmentComponent from "./AssessmentComponent";
 import { AuthContext } from "../../../hooks/contextProviders/AuthProvider";
 
-type AssessmentData = {
-  [key: string]: [boolean, number];
+type assessmentData = {  //data missing id - dont think we need
+  completed?: boolean;
+  score?: string | null;
 };
 
-const placeHolderkData: AssessmentData = {
-  test1: [true, 80],
-  test2: [false, 0],
-  test3: [true, 90],
-  test4: [true, 100],
-  test5: [false, 0],
-  test6: [true, 76],
-  test7: [true, 85],
-  test8: [false, 0],
-};
-
-const assessmentEntries = Object.entries(placeHolderkData);
-const rowChunks = [assessmentEntries.slice(0, 4), assessmentEntries.slice(4, 8)];
-
-function AssesmentDashboard() {
+function AssesmentDashboard() {   //displays the assesment dashboard
   const [testMode, setTestMode] = useState(false);
   const [assessmentString, setAssessmentString] = useState("");
-  const { user, userData } = useContext(AuthContext);
+  const { userData } = useContext(AuthContext);
 
-  const handleAssessmentClick = (assessmentId: string): void => {
-    const prepare = async () => {
-      await setAssessmentString(assessmentId);
-      await setTestMode(true);
-      console.log(assessmentId);
-    };
-    prepare();
+  
+  if (!userData) { // make sure `userData` is available before continuing
+    return <div>Loading...</div>;
+  }
+
+  const assessmentData = userData?.assessments || {}; //get data and progress from user data
+  const avgAssessmentProgress = userData?.assessmentProgress || 0;
+
+  const defaultAssessments: [string, assessmentData][] = Array.from({ length: 8 }, (_, i) => { //make sure assessments show up 
+    const id = `assessment${i + 1}`;
+    const existing = assessmentData[id] || {}; // get data or empty object if no data
+    return [
+      id,
+      {
+        completed: existing.completed || false,
+        score: existing.score?.toFixed(2) || null,
+      },
+    ] as [string, { completed: boolean; score: string | null }];
+  });
+
+  const rowChunks = [
+    defaultAssessments.slice(0, 4),
+    defaultAssessments.slice(4, 8),
+  ];
+
+  const handleAssessmentClick = (assessmentId: string): void => { //changed
+    setAssessmentString(assessmentId);
+    setTestMode(true);
   };
 
   useEffect(() => {
-    // Check if userData is null or not
     if (userData) {
-      console.log("User data is available:", userData);
+      console.log("user data is available", userData);
     } else {
-      console.log("User data is not available.");
+      console.log("user data is not available");
     }
+  }, [userData]); // runs whenever data changes
 
-    console.log("user object or wtv:", user?.uid);
-  }, []);
-
-  if (testMode === false) {
+  if (testMode) { // if in test mode show assessment component
     return (
-      <div style={styles.holeWrapper}>
-        <div style={styles.circlesWrapper}>
-          <SegmentedProgressCircle
-            r="70"
-            cx="80"
-            cy="80"
-            strokeWidth="8"
-            progress={67}
-            title="Assessments"
-          ></SegmentedProgressCircle>
-          <SegmentedProgressCircle
-            r="70"
-            cx="80"
-            cy="80"
-            strokeWidth="8"
-            progress={35}
-            title="Lectures"
-          ></SegmentedProgressCircle>
-          <SegmentedProgressCircle
-            r="70"
-            cx="80"
-            cy="80"
-            strokeWidth="8"
-            progress={95}
-            title="Assignments"
-          ></SegmentedProgressCircle>
-        </div>
-        <Box
-          className="assessment-dashboard"
+      <div>
+        <Button
+          variant="outlined"
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 3,
-            padding: 3,
-            backgroundColor: "#f4f5fb",
-            borderRadius: 4,
-            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.05)",
+            color: "#616783",
+            marginBottom: 0,
+            fontSize: 16,
+            fontWeight: 600,
+            borderColor: "#616783",
+            width: "15vw",
+            marginTop: 1,
+            padding: 1,
           }}
+          onClick={() => setTestMode(false)}
         >
-          {rowChunks.map((row, i) => (
-            <ButtonGroup
-              key={i}
-              fullWidth
-              sx={{
-                justifyContent: "space-between",
-                gap: 2,
+          Back
+        </Button>
+        <AssessmentComponent assessmentId={assessmentString} onSubmitCallback={() => setTestMode(false)} />
+      </div>
+    );
+  }
 
-                "& .MuiButton-root": {
-                  flex: 1,
-                  padding: 2,
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  borderRadius: 3,
-                  transition: "all 0.3s ease",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  whiteSpace: "nowrap",
-                  border: "none",
-                  textTransform: "none",
-                },
-              }}
-            >
-              {row.map(([key, [isCompleted, score]]) => (
+  return (
+    <div style={styles.holeWrapper}>
+      <div style={styles.circlesWrapper}>
+        <SegmentedProgressCircle
+          r="70"
+          cx="80"
+          cy="80"
+          strokeWidth="8"
+          progress={avgAssessmentProgress}
+          title="Assessments"
+        />
+        
+      </div>
+      <Box
+        className="assessment-dashboard"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 3,
+          padding: 3,
+          backgroundColor: "#f4f5fb",
+          borderRadius: 4,
+          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.05)",
+        }}
+      >
+        {rowChunks.map((row, i) => (
+          <ButtonGroup
+            key={i}
+            fullWidth
+            sx={{
+              justifyContent: "space-between",
+              gap: 2,
+              "& .MuiButton-root": {
+                flex: 1,
+                padding: 2,
+                fontSize: "1rem",
+                fontWeight: "600",
+                borderRadius: 3,
+                transition: "all 0.3s ease",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                whiteSpace: "nowrap",
+                border: "none",
+                textTransform: "none",
+              },
+            }}
+          >
+            {row.map(([key, value]) => { 
+              const { completed, score } = value as { completed?: boolean; score?: string | null };
+              return (
                 <Button
                   key={key}
                   variant="contained"
-                  onClick={() => handleAssessmentClick(key)}
+                  onClick={() => handleAssessmentClick(key)} // go to test mode on click
                   sx={{
-                    backgroundColor: isCompleted ? "#bec2de" : "#bec2de",
-                    color: isCompleted ? "#212121" : "#212121",
+                    backgroundColor: completed ? "#bec2de" : "#bec2de",
+                    color: completed ? "#212121" : "#212121",
                     fontWeight: 600,
                     padding: 4,
                     fontSize: "1rem",
                     "&:hover": {
-                      backgroundColor: isCompleted ? "#b1b5ce" : "#b1b5ce",
+                      backgroundColor: completed ? "#b1b5ce" : "#b1b5ce",
                     },
                   }}
                 >
-                  {`ASSESSMENT - ${key.replace(/[^\d]/g, "")} | ${
-                    isCompleted ? `Score: ${score}%` : "Incomplete"
+                  {`ASSESSMENT - ${String(key).replace(/[^\d]/g, "")} | ${
+                    completed && score !== null && score !== undefined
+                      ? `Score: ${parseFloat(score.toString()).toFixed(2)}%`
+                      : "Incomplete"
                   }`}
                 </Button>
-              ))}
-            </ButtonGroup>
-          ))}
-        </Box>
-      </div>
-    );
-  }
-  if (testMode === true) {
-    return (
-      <div>
-                <Button
-            variant="outlined"
-            sx={{
-              color: "#616783",
-              marginBottom: 0,
-              fontSize: 16,
-              fontWeight: 600,
-              borderColor: "#616783",
-              width: "15vw",
-              marginTop: 1,
-              padding: 1,
-            }}
-            onClick={() => setTestMode(false)}
-          >
-            Back
-          </Button>
-        <AssessmentComponent assessmentId={assessmentString}></AssessmentComponent>
-      </div>
-    );
-  }
+              );
+            })}
+          </ButtonGroup>
+        ))}
+      </Box>
+    </div>
+  );
 }
+
 export default AssesmentDashboard;
 
 const styles: Record<string, CSSProperties> = {
   circlesWrapper: {
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "center",
     alignSelf: "center",
     justifySelf: "center",
     width: "40%",
